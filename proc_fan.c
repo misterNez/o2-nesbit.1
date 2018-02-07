@@ -8,7 +8,7 @@ int main (int argc, char* argv[]) {
    int i, c, pr_limit, pr_count, status;
 
    if (argc == 2) {
-      while ((c = getopt(argc, argv, "h")) != -1) {
+      if ((c = getopt(argc, argv, "h")) != -1) {
          switch(c) {
 	 case 'h':
 	     printf("Usage: %s -n [INTEGER]\n", argv[0]);
@@ -25,32 +25,41 @@ int main (int argc, char* argv[]) {
 	     pr_count = 0;
 	     status = 0;
 
-	     for (i = 1; i <= pr_limit; i++ ) {
+	     for (i = 1; i <= 5; i++ ) {
 	        if (pr_count == pr_limit) {
-		   wait(&status);
+		   childpid = wait(&status);
 		   pr_count--;
+		   printf("Process limit reached. Process %ld finished. %d child processes running.\n", (long)childpid, pr_count);
 		}
 
 		childpid = fork();
+		printf("%ld running.\n", (long)getpid());
 
 		if (childpid == -1) {
 		   perror("fork");
 		}
 
 		else if (childpid == 0) {
-		   pr_count++;
-		   printf("Hello from child %d.", i);
+		   //pr_count++;
+		   printf("Hello from child %d, process %ld.\n", i, (long)getpid());
 		   sleep(i+1);
 		   exit(0);
 		}
 
 		else {
-		   printf("Started process %d, %ld sleeping\n", i, (long)getpid());
-		   while ((wpid = waitpid(-1, &status, WNOHANG)) > 0)
+		   int z = 0;
+		   pr_count++;
+		   printf("Started process %d, %ld. %d child processes running.\n", i, (long)childpid, pr_count);
+	           while ((wpid = waitpid(-1, &status, WNOHANG )) > 0) {
 		      pr_count--;
+		      printf("Process %ld finished(1). %d child processes running.\n", (long)wpid, pr_count);
+		   }
 		}
 	     }
-	     while ((wpid = wait(&status)) > 0);
+	     while ((wpid = wait(&status)) > 0) {
+		pr_count--;
+	        printf("Process %ld finished(2).\n", (long)wpid);
+	     }
 	 }
       }
 
