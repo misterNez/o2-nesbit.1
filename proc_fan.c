@@ -4,7 +4,9 @@
 #include <wait.h>
 #include "makeargv.h"
 
+//Start of main program
 int main (int argc, char* argv[]) {
+   //Declare varibales.
    pid_t childpid, wpid = 0;
    int i, c, pr_limit, pr_count, status = 0;
    const int MAX_CANON = 100;
@@ -12,45 +14,63 @@ int main (int argc, char* argv[]) {
    char arg[MAX_CANON];
    char** myargv;
 
+   //If number of arguments is 2:
    if (argc == 2) {
+      //Check for -h option.
       if ((c = getopt(argc, argv, "h")) != -1) {
          switch(c) {
+	 //Print helpful information.
 	 case 'h':
-	     printf("Usage: %s -n [INTEGER]\n", argv[0]);
+	     printf("\nUsage: %s -n [INTEGER] < [EXECUTABLE(S)]\nExample: %s -n 4 < testing.data\n"
+		    "n is a required option to specify the number of process allowed to run at a time.\n",
+		    "Executables are read by line from standard input.\n",
+		    argv[0], argv[0]);
+	     break;
 	 }
       }
+   //End program.
    return 0; 
    }
 
+   //Else if number of arguments is 3:
    else if (argc == 3) {
-      while((c = getopt(argc, argv, "n:")) != -1) {
+      //Check for -n option.
+      if ((c = getopt(argc, argv, "n:")) != -1) {
          switch(c) {
 	 case 'n':
+	     //Initialize varibales.
 	     pr_limit = atoi(argv[2]);
 	     pr_count = 0;
 	     status = 0;
 
+	     //While reading from standard input:
 	     while ((fgets(arg, MAX_CANON, stdin)) != NULL){
+		//If no more processes allowed to start wait for one to finish.
 	        if (pr_count == pr_limit) {
-		   printf("Process limt reached. Waiting...\n");
-		   childpid = wait(&status);
+		   printf("Process limit reached. Waiting...\n");
+		   wpid = wait(&status);
 		   pr_count--;
-		   printf("Process %ld finished. %d child processes running.\n", (long)childpid, pr_count);
+		   printf("Process %ld finished. %d child processes running.\n", (long)wpid, pr_count);
 		}
 
+		//Call the fork funtion, print current PID, increment i.
 		childpid = fork();
 		printf("%ld running.\n", (long)getpid());
 		i++;
 
+		//Check for error:
 		if (childpid == -1) {
-		   perror("fork error");
+		   perror("Fork error");
 		} 
 		
+		//Child code:
 		else if (childpid == 0) {
-		   printf("Hello from child %d, process %ld. Line: %s\n", i, (long)getpid(), arg);
+		   printf("Hello from child %d: %ld. Line: %s\n", i, (long)getpid(), arg);
+		   //Tokenize standard input.
 		   if (makeargv(arg, delim, &myargv) == -1) {
 		      perror("Child failed to construct argument array");
 		   } 
+		   //Run the executable.
 		   else {
 		      execvp(myargv[0], &myargv[0]);
 		      perror("Child failed to execute command");
@@ -58,23 +78,32 @@ int main (int argc, char* argv[]) {
 		exit(0);
 		} 
 		
+		//Parent code:
 		else {
+		   //Increment number of children.
 		   pr_count++;
-		   printf("Started process %d, %ld. %d child processes running. Line: %s\n", i, (long)childpid, pr_count, arg);
-	           while ((wpid = waitpid(-1, &status, WNOHANG )) > 0) {
+		   printf("%ld started child process %d: %ld.\n%d child processes running.\n", (long)getpid(), i, (long)childpid, pr_count);
+		   //Check for finished children:
+	           if ((wpid = waitpid(-1, &status, WNOHANG )) > 0) {
+		      //Decrement number of children.
 		      pr_count--;
-		      printf("Process %ld finished(1). %d child processes running.\n", (long)wpid, pr_count);
+		      printf("Process %ld finished. %d child processes running.\n", (long)wpid, pr_count);
 		   }
 	        }
 	     }
+	     //Wait for all children to finish.
 	     while ((wpid = wait(&status)) > 0) {
 		pr_count--;
-	        printf("Process %ld finished(2).\n", (long)wpid);
+	        printf("Process %ld finished.\n", (long)wpid);
 	     }
+	     break;
 	 }
       }
-   return 0;
+      //End of program.
+      return 1;
    }
-   fprintf(stderr, "%s: Error: Invalid number of arguments\n", argv[0]);
-   return 0;
+   //Report command line error.
+   fprintf(stderr, "%s: Error: Invalid number of arguments", argv[0]);
+   perror("");
+   return -1;
 }
