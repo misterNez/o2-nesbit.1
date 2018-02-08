@@ -3,12 +3,12 @@
 #include <unistd.h>
 
 int main (int argc, char* argv[]) {
-   int i, s, r = 0;;
+   int i, s, r = 0;
    pid_t pid = getpid();
 
    if (argc != 3) {
-      fprintf(stderr, "Usage: %s processes\n", argv[0]);
-      return 1;
+      fprintf(stderr, "%s: Error: %ld: Invalid number of arguments\n", argv[0], (long)pid);
+      return(0);
    }
 
    s = atoi(argv[1]);
@@ -16,8 +16,9 @@ int main (int argc, char* argv[]) {
 
    for (i = 0; i < r; i++) {
       sleep(s);
-      fprintf(stderr, "Process ID: %ld\n", pid);
-   }
+      fprintf(stderr, "Process ID: %ld ", (long)pid);
+      perror("");
+   } 
    
    printf("\n");
    return 0;

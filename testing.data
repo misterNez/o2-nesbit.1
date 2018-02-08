@@ -1,6 +1,16 @@
-./testsim 5 10
-./testsim 8 10
+./testsim 5 7
+./testsim 3 10
 ./testsim 0 0
-./testsim 4 10
-./testsim 13 6
+./testsim 4 2
+./testsim 4 6
 ./testsim 1 12
+./testsim 1 2 4
+./testsim 6 
+./test sim x y
+./testsim 8 1
+./testsim 3 3
+./testsim 9 3
+./testsim -n pr
+./test sim 5 2
+./testsim 3 1
+./testsim dogs > cats

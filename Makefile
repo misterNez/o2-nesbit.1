@@ -8,7 +8,7 @@ all : $(PROGS)
 proc_fan : $(OBJS1)
 	$(CC) -o $@ $^
 
-simp_fan : $(OBJS2)
+testsim : $(OBJS2)
 	$(CC) -o $@ $^
 
 clean :

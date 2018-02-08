@@ -1,0 +1,37 @@
+Author: Nick Nesbit
+# o2-nesbit.1
+Operating Systems Project 1
+Simple Batch Processing Facility
+
+git repository: https://github.com/misterNez/o2-nesbit.1
+
+This program is Exercise 3.9 from the Unix Systems Programming (Kay A. Robins & Steven Robbins) textbook.
+
+For help: ./proc_fan -h
+
+To run: ./proc_fan -n [INTEGER] < [EXECUTABLES] (Integer specifies process limit)
+
+Basic funiction:
+
+   Main loop:
+      -Read from standard input until end-of-file is reached.
+      -If process limit is reached, wait for a child process to finish.
+      -Use fork, makeargv, and execvp to execute a program from a child process.
+      -Check if any child processes have finished.
+      -After end-of-file is reached, wait for remaining children to finish.
+
+
+   testsim is the accompanying executable:
+      -Runs the sleep function within a for loop.
+      -Number of loops and duration of sleep determined by arguments.
+      -Prints PID during each iteration of the loop.
+
+
+   Included is a testing.data file:
+      -Run using the following: ./proc_fan -n [INTEGER] < testing.data
+
+
+   The code for makeargv was obtain via the textbook.
+
+Difficulties:
+
