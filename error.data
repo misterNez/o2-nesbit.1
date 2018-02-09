@@ -1,0 +1,11 @@
+dogs
+are
+better
+than
+cats
+./testsim
+./testsim 1 2 3
+one two three
+./testsim a b
+./testsim 
+./null 2 4

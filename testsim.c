@@ -16,8 +16,7 @@ int main (int argc, char* argv[]) {
 
    for (i = 0; i < r; i++) {
       sleep(s);
-      fprintf(stderr, "Process ID: %ld ", (long)pid);
-      perror("");
+      fprintf(stdout, "%s: Process ID: %ld\n", argv[0], (long)pid);
    } 
    
    printf("\n");

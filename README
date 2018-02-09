@@ -1,5 +1,5 @@
-Author: Nick Nesbit
 # o2-nesbit.1
+Author: Nick Nesbit
 Operating Systems Project 1
 Simple Batch Processing Facility
 
@@ -29,9 +29,23 @@ Basic funiction:
 
    Included is a testing.data file:
       -Run using the following: ./proc_fan -n [INTEGER] < testing.data
+      -testing.data contains 21 lines of commands to run testsim, with varying arguments.
+
+   Include is a error.data file:
+      -Run usig the following: ./proc_fan -n {INTEGER] < error.data
+      -error.data contains 10 lines of invalid commands. Used for checking error messages.
 
 
    The code for makeargv was obtain via the textbook.
+      -makeargv tokenizes a command and stores the tokens in an array.
+      -Used for creating the arguments of the execvp() function. 
 
-Difficulties:
+   Makefile
+      make: Builds the project.
+      make clean: Removes object files and executables.
 
+
+Difficulties
+
+   -Poor error checking on argument types.
+   -Poor error checking on options.
